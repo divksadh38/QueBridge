@@ -21,14 +21,13 @@ class F1dataloader:
             session.load(weather=True)
             results = session.results
             results['year'] = year
-            results['gp_name'] = f"{race_name}_{year}"  # Append year for uniqueness
 
             # Load weather and laps data
             weather = session.weather_data
             WDF = pd.DataFrame(weather)
             laps = session.laps
             LDF = pd.DataFrame(laps)
-            LDF['gp_name'] = f"{race_name}_{year}"  # Append year for uniqueness
+            LDF['Year'] = year  # Append year for uniqueness
 
             # Debugging prints
             print(f"Laps data for {race_name} {year}:")
@@ -98,6 +97,7 @@ class F1dataloader:
             try:
              GDF= pd.read_csv('gp_name,.csv')  # Ensure this  exists
              df = pd.merge(df,GDF, on='gp_name', how='left')
+             df = pd.merge_asof(df,WDF, on='Time', direction='nearest')
             except FileNotFoundError:
                 print("GP name mapping file not found. Skipping merge.")
             # Final sorting and categorization
